@@ -12,17 +12,15 @@ test.describe('US005 - Painel e Ações do Administrador', () => {
     const email = `admin${Date.now()}@teste.com`;
     const password = 'Admin123';
 
-    const cadastro = await request.post(
-      'https://serverest.dev/usuarios',
-      {
-        data: {
-          nome: 'Administrador de Teste',
-          email,
-          password,
-          administrador: 'true',
-        },
-      }
-    );
+    // Criação do usuário Admin via API
+    const cadastro = await request.post('https://serverest.dev/usuarios', {
+      data: {
+        nome: 'Administrador de Teste',
+        email,
+        password,
+        administrador: 'true',
+      },
+    });
 
     expect(cadastro.ok()).toBeTruthy();
 
@@ -52,33 +50,20 @@ test.describe('US005 - Painel e Ações do Administrador', () => {
       '10'
     );
 
-    await adminPage.submitProduct();
+    const response = await adminPage.submitProduct();
+    expect(response.ok()).toBeTruthy();
   });
 
   test('CT027 - Tentar cadastrar produto com nome já existente', async () => {
     const productName = `Produto duplicado ${Date.now()}`;
 
     await adminPage.goToRegisterProduct();
-
-    await adminPage.fillProductForm(
-      productName,
-      '100',
-      'Produto de teste',
-      '10'
-    );
-
+    await adminPage.fillProductForm(productName, '100', 'Produto de teste', '10');
     const primeiroCadastro = await adminPage.submitProduct();
     expect(primeiroCadastro.ok()).toBeTruthy();
 
     await adminPage.goToRegisterProduct();
-
-    await adminPage.fillProductForm(
-      productName,
-      '100',
-      'Produto duplicado',
-      '10'
-    );
-
+    await adminPage.fillProductForm(productName, '100', 'Produto duplicado', '10');
     const segundoCadastro = await adminPage.submitProduct();
 
     expect(segundoCadastro.status()).toBe(400);
@@ -88,18 +73,23 @@ test.describe('US005 - Painel e Ações do Administrador', () => {
     const productName = `Produto para excluir ${Date.now()}`;
 
     await adminPage.goToRegisterProduct();
-
-    await adminPage.fillProductForm(
-      productName,
-      '50',
-      'Produto criado para exclusão',
-      '5'
-    );
-
+    await adminPage.fillProductForm(productName, '50', 'Produto criado para exclusão', '5');
     const response = await adminPage.submitProduct();
     expect(response.ok()).toBeTruthy();
 
     await adminPage.goToListProducts();
     await adminPage.deleteProductByName(productName);
+  });
+});
+
+// Bloco separado para testes de Autenticação/Falha
+test.describe('US001 - Autenticação de Usuário', () => {
+  test('CT030 - Login com email inválido', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+
+    await loginPage.navigate();
+    await loginPage.login('email-invalido@teste.com', 'senha-invalida');
+
+    await loginPage.assertErrorMessage('Email e/ou senha inválidos');
   });
 });

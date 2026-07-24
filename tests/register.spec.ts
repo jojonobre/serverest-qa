@@ -11,16 +11,32 @@ test.describe('US002 - Cadastrar Usuário', () => {
 
   test('CT005 - Cadastro com sucesso com atribuição de Administrador', async ({ page }) => {
     const randomEmail = `admin_${Date.now()}@qa.com`;
-    await registerPage.registerUser('Novo Admin', randomEmail, 'senha123', true);
 
-    await expect(page).toHaveURL(/.*admin\/home/);
+    await registerPage.registerUser(
+      'Novo Admin',
+      randomEmail,
+      'senha123',
+      true
+    );
+
+    await expect(page).toHaveURL(/\/admin\/home$/, {
+      timeout: 15000,
+    });
   });
 
   test('CT006 - Cadastro com sucesso sem atribuição de Administrador', async ({ page }) => {
     const randomEmail = `user_comum_${Date.now()}@qa.com`;
-    await registerPage.registerUser('Usuário Comum', randomEmail, 'senha123', false);
 
-    await expect(page).toHaveURL(/.*home/);
+    await registerPage.registerUser(
+      'Usuário Comum',
+      randomEmail,
+      'senha123',
+      false
+    );
+
+    await expect(page).toHaveURL(/\/home$/, {
+      timeout: 15000,
+    });
   });
 
   test('CT007 - Cadastrar com e-mail e senha válidos e nome inválido', async () => {
@@ -30,9 +46,29 @@ test.describe('US002 - Cadastrar Usuário', () => {
     await registerPage.assertAlertMessage('Nome não pode ser apenas caracteres especiais');
   });
 
-  test('CT008 - Cadastrar com e-mail já utilizado', async () => {
-    await registerPage.registerUser('Fulano QA', 'fulano@qa.com', 'senha123', false);
+  test('CT008 - Cadastrar com e-mail já utilizado', async ({ request }) => {
+    const email = `duplicado_${Date.now()}@qa.com`;
 
-    await registerPage.assertAlertMessage('Este email já está sendo usado');
+    const cadastro = await request.post('https://serverest.dev/usuarios', {
+      data: {
+        nome: 'Usuário Existente',
+        email,
+        password: 'senha123',
+        administrador: 'false',
+      },
+    });
+
+    expect(cadastro.ok()).toBeTruthy();
+
+    await registerPage.registerUser(
+      'Outro Usuário',
+      email,
+      'senha123',
+      false
+    );
+
+    await registerPage.assertAlertMessage(
+      'Este email já está sendo usado'
+    );
   });
 });

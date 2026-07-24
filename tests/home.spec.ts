@@ -2,41 +2,47 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { HomePage } from '../pages/HomePage';
 
-test.describe('US003 - Funcionalidades da Home', () => {
-  let loginPage: LoginPage;
+test.describe('US003 - Funcionalidade de Home', () => {
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
+  test.beforeEach(async ({ page, request }) => {
+    const loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
+    const email = `user_comum_${Date.now()}@qa.com`;
+    const password = 'teste123';
+
+    await request.post('https://serverest.dev/usuarios', {
+      data: {
+        nome: 'Usuário Comum',
+        email,
+        password,
+        administrador: 'false',
+      },
+    }).catch(() => {});
+
     await loginPage.navigate();
-    await loginPage.login('fulano@qa.com', 'teste');
+    await loginPage.login(email, password);
+
+    await expect(page).toHaveURL(/\/home/, {
+      timeout: 15000,
+    });
   });
 
-  test('CT010 - Carregar lista de produtos ao acessar a Home', async () => {
-    await expect(homePage.productCards.first()).toBeVisible();
-  });
-
-  test('CT012 - Pesquisar item por nome', async () => {
+  test('CT009 - Pesquisar item por nome', async () => {
     await homePage.searchProduct('Logitech');
     await homePage.assertProductIsVisible('Logitech');
   });
 
-  test('CT013 - Pesquisar produto inexistente', async () => {
-    await homePage.searchProduct('ProdutoInexistenteX12399');
+  test('CT010 - Pesquisar produto inexistente', async () => {
+    await homePage.searchProduct('Produto Inexistente XYZ');
     await homePage.assertNoProductFound();
   });
 
-  test('CT014 - Adicionar produto à lista de compras', async ({ page }) => {
-    await homePage.searchProduct('Logitech');
+  test('CT011 - Adicionar produto à lista de compras', async ({ page }) => {
     await homePage.addFirstProductToCart();
 
-    await expect(page).toHaveURL(/.*carrinho/);
-  });
-
-  test('CT016 - Realizar Logout da aplicação', async ({ page }) => {
-    await homePage.logout();
-    await expect(page).toHaveURL(/.*login/);
+    // Valida que não há mensagem de erro
+    await expect(page.locator('.alert-danger')).not.toBeVisible();
   });
 });

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class RegisterPage {
   readonly page: Page;
@@ -11,31 +11,42 @@ export class RegisterPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.nameInput = page.locator('data-testid=nome');
-    this.emailInput = page.locator('data-testid=email');
-    this.passwordInput = page.locator('data-testid=senha');
-    this.adminCheckbox = page.locator('data-testid=checkbox');
-    this.registerButton = page.locator('data-testid=cadastrar');
-    this.alertMessage = page.locator('.alert');
+
+    this.nameInput = page.getByTestId('nome');
+    this.emailInput = page.getByTestId('email');
+    this.passwordInput = page.locator('input[type="password"]');
+    this.adminCheckbox = page.getByTestId('checkbox');
+    this.registerButton = page.getByTestId('cadastrar');
+    this.alertMessage = page.locator('.alert').first();
   }
 
   async navigate() {
-    await this.page.goto('https://front.serverest.dev/cadastrarusuarios');
+    await this.page.goto('/cadastrarusuarios');
+
+    await expect(this.nameInput).toBeVisible();
   }
 
-  async registerUser(name: string, email: string, pass: string, isAdmin: boolean = false) {
+  async registerUser(
+    name: string,
+    email: string,
+    password: string,
+    isAdmin = false
+  ) {
     await this.nameInput.fill(name);
     await this.emailInput.fill(email);
-    await this.passwordInput.fill(pass);
-    
+    await this.passwordInput.fill(password);
+
     if (isAdmin) {
       await this.adminCheckbox.check();
+    } else {
+      await this.adminCheckbox.uncheck();
     }
-    
+
     await this.registerButton.click();
   }
 
   async assertAlertMessage(expectedText: string) {
+    await expect(this.alertMessage).toBeVisible({ timeout: 10000 });
     await expect(this.alertMessage).toContainText(expectedText);
   }
 }

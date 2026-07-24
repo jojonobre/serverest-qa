@@ -26,6 +26,6 @@ test.describe('US001 - Funcionalidade de Login', () => {
 
   test('CT004 - Login com email em formato inválido', async () => {
     await loginPage.login('email_invalido.com', 'teste');
-    await loginPage.assertErrorMessage('Email deve ser um email válido');
+    await loginPage.assertInvalidEmail();
   });
 });

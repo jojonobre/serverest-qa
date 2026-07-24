@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class HomePage {
   readonly page: Page;
@@ -11,30 +11,46 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.searchInput = page.locator('data-testid=pesquisar');
-    this.searchButton = page.locator('data-testid=botaoPesquisar');
-    this.productCards = page.locator('.card');
-    this.addToListButton = page.locator('data-testid=adicionarNaLista');
-    this.logoutButton = page.locator('data-testid=logout');
-    this.noProductMessage = page.locator('text=Nenhum produto foi encontrado');
+
+    this.searchInput = page.getByTestId('pesquisar');
+    this.searchButton = page.getByTestId('botaoPesquisar');
+    this.productCards = page.locator('.card, [class*="product"], [class*="item"]');
+    this.addToListButton = page.getByTestId('adicionarNaLista');
+    this.logoutButton = page.getByRole('button', { name: /logout|sair/i });
+    this.noProductMessage = page.getByText(/nenhum produto|não encontrado/i);
   }
 
   async searchProduct(name: string) {
+    await expect(this.searchInput).toBeVisible({ timeout: 10000 });
     await this.searchInput.fill(name);
     await this.searchButton.click();
   }
 
   async addFirstProductToCart() {
+    await expect(this.addToListButton.first()).toBeVisible({ timeout: 10000 });
     await this.addToListButton.first().click();
+  }
+
+  async addProductToCart(productName: string) {
+    const productCard = this.productCards.filter({
+      hasText: productName,
+    });
+
+    await expect(productCard).toBeVisible();
+    await productCard.locator('[data-testid="adicionarNaLista"]').click();
   }
 
   async logout() {
     await this.logoutButton.click();
+    await expect(this.page).toHaveURL(/\/login/);
   }
 
   async assertProductIsVisible(productName: string) {
-    await expect(this.productCards.filter({ hasText: productName })).toBeVisible();
-  }
+  const productPattern = new RegExp(productName, 'i');
+  await expect(
+    this.productCards.filter({ hasText: productPattern }).first()
+  ).toBeVisible({ timeout: 10000 });
+}
 
   async assertNoProductFound() {
     await expect(this.noProductMessage).toBeVisible();

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class LoginPage {
   readonly page: Page;
@@ -9,26 +9,44 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.locator('data-testid=email');
-    this.passwordInput = page.locator('data-testid=senha');
-    this.submitButton = page.locator('data-testid=entrar');
-    this.errorMessage = page.locator('.alert');
+    this.emailInput = page.getByTestId('email');
+    this.passwordInput = page.getByTestId('senha');
+    this.submitButton = page.getByTestId('entrar');
+    this.errorMessage = page.locator('.alert').first();
   }
 
   async navigate() {
-    await this.page.goto('https://front.serverest.dev/login');
+    await this.page.goto('/login');
     await expect(this.page).toHaveURL(/\/login/);
   }
 
-  async login(email: string, pass: string) {
+  async login(email: string, password: string) {
     await this.emailInput.fill(email);
-    await this.passwordInput.fill(pass);
-
-    await Promise.all([
-      this.page.waitForURL(/\/admin\/home/, { timeout: 15000 }),
-      this.submitButton.click(),
-    ]);
+    await this.passwordInput.fill(password);
+    await this.submitButton.click();
   }
 
+  async assertErrorMessage(expectedMessage: string) {
+    await expect(this.errorMessage).toContainText(expectedMessage, {
+      timeout: 10000,
+    });
+  }
 
+  async loginAsAdmin(email: string, password: string) {
+    await this.login(email, password);
+
+    await expect(this.page).toHaveURL(/\/admin\/home/, {
+      timeout: 15000,
+    });
+  }
+
+  async assertInvalidEmail() {
+    await expect(this.emailInput).toBeVisible();
+
+    const isValid = await this.emailInput.evaluate(
+      (element) => (element as HTMLInputElement).validity.valid
+    );
+
+    expect(isValid).toBe(false);
+  }
 }
