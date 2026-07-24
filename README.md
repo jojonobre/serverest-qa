@@ -1,10 +1,13 @@
+<div align="center">
+  
 #  Automação E2E - Front-ServeRest com Playwright
 
 Projeto de automação de testes End-to-End (E2E) desenvolvido para a aplicação **Front-ServeRest**, utilizando **Playwright** com **TypeScript** e arquitetura **Page Object Model (POM)**.
 
 O objetivo deste projeto é validar os principais fluxos da aplicação por meio de testes automatizados, aplicando boas práticas de organização, reutilização de código e manutenção da suíte de testes.
+--- 
+</div>
 
----
 
 ##  Sobre o Projeto
 
@@ -22,7 +25,6 @@ A estrutura foi desenvolvida utilizando o padrão **Page Object Model (POM)** pa
 ---
 
 ##  Tecnologias Utilizadas
-
 <div align="center">
 
 | Tecnologia | Descrição |
@@ -36,6 +38,8 @@ A estrutura foi desenvolvida utilizando o padrão **Page Object Model (POM)** pa
 </div>
 
 ---
+
+## Tabela 
 
 ##  Estrutura do Projeto
 
@@ -218,14 +222,14 @@ npx playwright show-report
 
 ---
 
-##  Autora
+<div align="center">
 
-**Joyce Maria de Oliveira**
+### Joyce Maria 💜
 
-Estudante de Ciência da Computação • QA Analyst
+Estudante de Ciência da Computação • QA Analyst Intern
 
-Focada em Automação de Testes, Qualidade de Software e Aprendizado Contínuo.
+<a href="https://github.com/jojonobre">
+  <img src="https://img.shields.io/badge/GitHub-Perfil-181717?style=for-the-badge&logo=github">
+</a>
 
----
-
-⭐ Se este projeto foi útil ou interessante para você, deixe uma estrela no repositório.
+</div>
