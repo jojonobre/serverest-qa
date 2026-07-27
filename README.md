@@ -4,8 +4,10 @@
 
 Projeto de automação de testes End-to-End (E2E) desenvolvido para a aplicação **Front-ServeRest**, utilizando **Playwright** com **TypeScript** e arquitetura **Page Object Model (POM)**.
 
+---
 O objetivo deste projeto é validar os principais fluxos da aplicação por meio de testes automatizados, aplicando boas práticas de organização, reutilização de código e manutenção da suíte de testes.
---- 
+---
+
 </div>
 
 
@@ -37,34 +39,6 @@ A estrutura foi desenvolvida utilizando o padrão **Page Object Model (POM)** pa
 | GitHub | Hospedagem do projeto |
 
 </div>
-
----
-
-## Tabela 
-
-##  Estrutura do Projeto
-
-```text
-front-serverest-e2e/
-│
-├── pages/
-│   ├── AdminPage.ts
-│   ├── CartPage.ts
-│   ├── HomePage.ts
-│   ├── LoginPage.ts
-│   └── RegisterPage.ts
-│
-├── tests/
-│   ├── admin.spec.ts
-│   ├── cart.spec.ts
-│   ├── home.spec.ts
-│   ├── login.spec.ts
-│   └── register.spec.ts
-│
-├── playwright.config.ts
-├── package.json
-└── README.md
-```
 
 ---
 
@@ -121,6 +95,7 @@ front-serverest-e2e/
 Antes de executar o projeto, tenha instalado:
 
 - Node.js (18+)
+- Docker
 - Git
 - VS Code (recomendado)
 
@@ -218,6 +193,7 @@ npx playwright show-report
 - ✔️ Reutilização de código
 - ✔️ Organização por funcionalidades
 - ✔️ Separação entre páginas e testes
+- ✔️ Implementação de Docker
 - ✔️ Código tipado com TypeScript
 - ✔️ Estrutura escalável para novos cenários
 
