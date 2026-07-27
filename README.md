@@ -32,6 +32,7 @@ A estrutura foi desenvolvida utilizando o padrão **Page Object Model (POM)** pa
 | Playwright | Framework de automação Web |
 | TypeScript | Linguagem principal |
 | Node.js | Ambiente de execução |
+| Docker | Containerização da suíte de testes |
 | Git | Controle de versão |
 | GitHub | Hospedagem do projeto |
 
@@ -189,9 +190,21 @@ npx playwright test tests/admin.spec.ts --project=chromium --headed
 
 ---
 
-#  Relatórios
+# Executando com Docker
 
-Após a execução, visualize o relatório HTML:
+## Construir a imagem
+
+```bash
+docker build -t front-serverest-e2e .
+```
+
+## Executar os testes
+
+```bash
+docker run --rm front-serverest-e2e
+```
+
+#  Relatórios
 
 ```bash
 npx playwright show-report
