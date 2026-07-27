@@ -210,18 +210,6 @@ npx playwright show-report
 
 ---
 
-#  Próximas Melhorias
-
-- [ ] Fixtures customizadas
-- [ ] Massa de dados dinâmica
-- [ ] Integração com GitHub Actions (CI)
-- [ ] Geração de relatórios Allure
-- [ ] Execução paralela otimizada
-- [ ] Testes cross-browser completos
-- [ ] Integração com API para preparação de dados
-
----
-
 <div align="center">
 
 ### Joyce Maria 💜
