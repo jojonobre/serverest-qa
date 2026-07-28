@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page, Response } from '@playwright/test';
 
 export class RegisterPage {
   readonly page: Page;
@@ -22,7 +22,6 @@ export class RegisterPage {
 
   async navigate() {
     await this.page.goto('/cadastrarusuarios');
-
     await expect(this.nameInput).toBeVisible();
   }
 
@@ -31,7 +30,11 @@ export class RegisterPage {
     email: string,
     password: string,
     isAdmin = false
-  ) {
+  ): Promise<Response> {
+    const responsePromise = this.page.waitForResponse(
+      res => res.url().includes('/usuarios') && res.request().method() === 'POST'
+    );
+
     await this.nameInput.fill(name);
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
@@ -43,6 +46,8 @@ export class RegisterPage {
     }
 
     await this.registerButton.click();
+
+    return responsePromise;
   }
 
   async assertAlertMessage(expectedText: string) {

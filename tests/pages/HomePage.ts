@@ -46,11 +46,11 @@ export class HomePage {
   }
 
   async assertProductIsVisible(productName: string) {
-  const productPattern = new RegExp(productName, 'i');
-  await expect(
-    this.productCards.filter({ hasText: productPattern }).first()
-  ).toBeVisible({ timeout: 10000 });
-}
+    const productPattern = new RegExp(productName, 'i');
+    await expect(
+      this.productCards.filter({ hasText: productPattern }).first()
+    ).toBeVisible({ timeout: 10000 });
+  }
 
   async assertNoProductFound() {
     await expect(this.noProductMessage).toBeVisible();
