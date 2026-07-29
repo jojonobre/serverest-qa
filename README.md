@@ -1,8 +1,8 @@
 <div align="center">
 
-# Automação E2E & API - Front-ServeRest com Playwright
+# Automação E2E & API - ServeRest com Playwright
 
-Projeto de automação de testes de Interface (UI) e Integração (API) desenvolvido para a aplicação **Front-ServeRest**, utilizando **Playwright** com **TypeScript**, geração dinâmica de massa com **Faker** e arquitetura **Page Object Model (POM)**.
+Projeto de automação de testes de Interface (UI) e Integração (API) desenvolvido para a aplicação **ServeRest**, utilizando **Playwright** com **TypeScript**, geração dinâmica de massa com **Faker** e arquitetura **Page Object Model (POM)**.
 
 ---
 
