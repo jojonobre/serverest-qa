@@ -1,127 +1,125 @@
 <div align="center">
-  
-#  Automação E2E - Front-ServeRest com Playwright
 
-Projeto de automação de testes End-to-End (E2E) desenvolvido para a aplicação **Front-ServeRest**, utilizando **Playwright** com **TypeScript** e arquitetura **Page Object Model (POM)**.
+# Automação E2E & API - Front-ServeRest com Playwright
+
+Projeto de automação de testes de Interface (UI) e Integração (API) desenvolvido para a aplicação **Front-ServeRest**, utilizando **Playwright** com **TypeScript**, geração dinâmica de massa com **Faker** e arquitetura **Page Object Model (POM)**.
 
 ---
-O objetivo deste projeto é validar os principais fluxos da aplicação por meio de testes automatizados, aplicando boas práticas de organização, reutilização de código e manutenção da suíte de testes.
----
+
+**Objetivo:** Validar os principais fluxos funcionais e regras de negócio da aplicação, garantindo regressão ágil, alta estabilidade e limpeza automática de ambiente pós-execução (*Teardown* via API).
 
 </div>
 
+---
 
-##  Sobre o Projeto
+# Sobre o Projeto
 
-Este projeto contempla a automação dos principais cenários da aplicação Front-ServeRest, cobrindo funcionalidades como:
+Este projeto engloba a validação automatizada de ponta a ponta dos módulos principais da aplicação ServeRest, contemplando:
 
-- Login de usuários
-- Cadastro de usuários
-- Navegação na Home
-- Lista de Compras (Carrinho)
-- Painel Administrativo
-- Cadastro e exclusão de produtos
+- **Autenticação e Login** (`US001`)
+- **Cadastro de Usuários** (`US002`)
+- **Vitrine e Busca de Produtos** (`US003`)
+- **Painel Administrativo & Gestão de Produtos** (`US005`)
 
-A estrutura foi desenvolvida utilizando o padrão **Page Object Model (POM)** para separar regras de negócio, elementos e casos de teste, tornando o projeto escalável e de fácil manutenção.
+A estrutura foi desenvolvida aplicando o padrão **Page Object Model (POM)** para separação clara entre seletores, ações e especificações de teste, além de rotinas de **setup** e **cleanup via API** para garantir a independência de cada cenário de teste.
 
 ---
 
-##  Tecnologias Utilizadas
+# Resumo Executivo & Métricas de Execução
+
+| Camada de Teste | Total Executado | Sucesso (Passed) | Falhas (Failed) | Taxa de Sucesso | Tempo Total |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Testes de API** | 10 | 10 | 0 | **100,0%** | ~0.2 min |
+| **Testes de UI** | 16 | 15 | 1 | **93,8%** | ~1.4 min |
+| **TOTAL** | **26** | **25** | **1** | **96,2%** | **~1.6 min** |
+
+> 📌 **Observação sobre a falha (BUG-001):** A única falha registrada na suíte de UI refere-se ao **CT008 (Cadastro)**, onde a aplicação permite cadastrar usuários com nomes compostos exclusivamente por caracteres especiais e/ou números sem exibir a validação esperada no frontend.
+
+---
+
+# Tecnologias Utilizadas
+
 <div align="center">
 
 | Tecnologia | Descrição |
 |------------|-----------|
-| Playwright | Framework de automação Web |
-| TypeScript | Linguagem principal |
-| Node.js | Ambiente de execução |
-| Docker | Containerização da suíte de testes |
-| Git | Controle de versão |
-| GitHub | Hospedagem do projeto |
+| **Playwright** | Framework principal para testes Web e API |
+| **TypeScript** | Linguagem tipada para maior confiabilidade |
+| **Faker JS** | Geração dinâmica e aleatória de massa de dados |
+| **Node.js** | Ambiente de execução |
+| **Docker** | Containerização da suíte de testes |
+| **Git / GitHub** | Controle de versão e hospedagem |
 
 </div>
 
 ---
 
-#  Casos de Teste Automatizados
+# Mapeamento dos Casos de Teste (26 Cenários)
 
-## US001 - Login
+## US001 - Login / Autenticação (UI & API)
 
-- ✅ Login com sucesso (Cliente)
-- ✅ Login com sucesso (Administrador)
-- ✅ Login com senha inválida
-- ✅ Login com e-mail inexistente
-- ✅ Login com e-mail inválido
+- ✅ `CT001` - Login com sucesso (Usuário Cliente)
+- ✅ `CT002` - Login com senha inválida
+- ✅ `CT003` - Login com e-mail não cadastrado
+- ✅ `CT004` - Login com e-mail em formato inválido (Validação HTML5)
 
----
+## US002 - Cadastro de Usuário (UI & API)
 
-##  US002 - Cadastro de Usuário
+- ✅ `CT006` - Cadastro de Administrador com sucesso
+- ✅ `CT007` - Cadastro de Cliente com sucesso
+- ❌ `CT008` - Cadastro com nome inválido (BUG-001)
+- ✅ `CT010` - Cadastro com e-mail já utilizado
 
-- ✅ Cadastro com perfil Administrador
-- ✅ Cadastro como usuário comum
-- ✅ Validação de nome inválido
-- ✅ Validação de e-mail já cadastrado
+## US003 - Home e Busca de Produtos (UI & API)
 
----
+- ✅ `CT009` - Pesquisar produto existente
+- ✅ `CT010` - Pesquisar produto inexistente
+- ✅ `CT011` - Adicionar produto à lista de compras
 
-##  US003 - Home
+## US005 - Painel Administrativo / Produtos (UI & API)
 
-- ✅ Carregamento da vitrine
-- ✅ Pesquisa de produto existente
-- ✅ Pesquisa de produto inexistente
-- ✅ Adicionar produto ao carrinho
-- ✅ Logout da aplicação
-
----
-
-##  US004 - Lista de Compras
-
-- ✅ Visualização dos produtos
-- ✅ Incremento de quantidade
-- ✅ Decremento de quantidade
+- ✅ `CT025` - Carregamento do painel administrativo
+- ✅ `CT026` - Cadastro de novo produto
+- ✅ `CT027` - Cadastro de produto com nome duplicado
+- ✅ `CT028` - Listagem de produtos
+- ✅ `CT029` - Remoção de produto existente
+- ✅ `CT030` - Cadastro de novo usuário administrador
+- ✅ `CT031` - Restrição de acesso às rotas administrativas via URL
 
 ---
 
-##  US005 - Painel Administrativo
+# Pré-requisitos
 
-- ✅ Acesso ao painel
-- ✅ Cadastro de produto
-- ✅ Validação de produto duplicado
-- ✅ Exclusão de produto
+Antes de executar a suíte, certifique-se de possuir:
 
----
-
-#  Pré-requisitos
-
-Antes de executar o projeto, tenha instalado:
-
-- Node.js (18+)
-- Docker
+- Node.js 18 ou superior
 - Git
-- VS Code (recomendado)
+- Docker *(opcional)*
+- Visual Studio Code 
 
 ---
 
-#  Instalação
+#  Instalação e Configuração
 
-Clone o repositório:
+## 1. Clone o repositório
 
 ```bash
 git clone https://github.com/jojonobre/front-serverest-e2e.git
 ```
 
-Entre na pasta:
+## 2. Acesse a pasta
 
 ```bash
 cd front-serverest-e2e
 ```
 
-Instale as dependências:
+## 3. Instale as dependências
 
 ```bash
 npm install
 ```
 
-Instale os navegadores do Playwright:
+## 4. Instale os navegadores do Playwright
 
 ```bash
 npx playwright install
@@ -129,43 +127,47 @@ npx playwright install
 
 ---
 
-#  Executando os Testes
+# Executando os Testes
 
-### Executar todos os testes
+## Executar toda a suíte
 
 ```bash
 npx playwright test
 ```
 
----
-
-### Executar em modo UI
-
-```bash
-npx playwright test --ui
-```
-
----
-
-### Executar visualizando o navegador
+## Executar em modo Headed
 
 ```bash
 npx playwright test --headed
 ```
 
----
-
-### Executar uma suíte específica
-
-Exemplo:
+## Executar no UI Mode
 
 ```bash
-npx playwright test tests/admin.spec.ts --project=chromium --headed
+npx playwright test --ui
+```
+
+## Executar apenas uma suíte
+
+```bash
+npx playwright test tests/login.spec.ts --project=chromium
+```
+
+## Executar apenas testes de API
+
+```bash
+npx playwright test tests/api
+```
+
+## Executar apenas testes de UI
+
+```bash
+npx playwright test tests/ui
 ```
 
 ---
 
-# Executando com Docker
+#  Executando via Docker
 
 ## Construir a imagem
 
@@ -173,29 +175,82 @@ npx playwright test tests/admin.spec.ts --project=chromium --headed
 docker build -t front-serverest-e2e .
 ```
 
-## Executar os testes
+## Executar o container
 
 ```bash
 docker run --rm front-serverest-e2e
 ```
 
-#  Relatórios
+---
+
+# Relatórios
+
+Após a execução dos testes, visualize o relatório HTML:
 
 ```bash
 npx playwright show-report
 ```
 
+O Playwright também gera automaticamente:
+
+-  HTML Report
+-  Trace Viewer
+-  Screenshots em caso de falha
+-  Vídeos das execuções (quando configurado)
+
 ---
 
 #  Boas Práticas Aplicadas
 
-- ✔️ Page Object Model (POM)
-- ✔️ Reutilização de código
-- ✔️ Organização por funcionalidades
-- ✔️ Separação entre páginas e testes
-- ✔️ Implementação de Docker
-- ✔️ Código tipado com TypeScript
-- ✔️ Estrutura escalável para novos cenários
+### ✔️ Page Object Model (POM)
+
+Separação entre elementos da interface, ações e testes, facilitando manutenção e reutilização.
+
+### ✔️ Massa Dinâmica com Faker
+
+Criação automática de usuários e produtos únicos durante cada execução.
+
+### ✔️ Setup & Teardown via API
+
+Criação e remoção automática dos dados utilizados nos testes, garantindo independência entre cenários.
+
+### ✔️ Testes Híbridos (UI + API)
+
+Validação simultânea da interface e das respostas HTTP da API.
+
+### ✔️ Containerização
+
+Execução padronizada através do Docker, facilitando integração contínua (CI/CD).
+
+### ✔️ Código Reutilizável
+
+Organização em utilitários, fixtures e Page Objects para reduzir duplicação de código.
+
+---
+
+# Funcionalidades Validadas
+
+- Login
+- Logout
+- Cadastro de usuários
+- Validação de regras de negócio
+- Busca de produtos
+- Cadastro de produtos
+- Exclusão de produtos
+- Controle de acesso
+- Validações da API
+- Limpeza automática de dados
+
+---
+
+#  Próximas Evoluções
+
+- Integração com GitHub Actions (CI)
+- Execução paralela em múltiplos navegadores
+- Relatórios Allure
+- Testes de Performance da API
+- Execução em ambiente Docker Compose
+- Pipeline completo de CI/CD
 
 ---
 
