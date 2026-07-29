@@ -111,16 +111,10 @@ test.describe('US005 - Painel e Ações do Administrador (UI)', () => {
   });
 });
 
-test.describe('US001 - Autenticação de Usuário (UI)', () => {
-  test('CT030 - Login com email inválido', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
-    await loginPage.navigate();
-    await loginPage.login(
-      faker.internet.email().toLowerCase(),
-      faker.internet.password()
-    );
-
-    await loginPage.assertErrorMessage('Email e/ou senha inválidos');
+test.describe('US001 - Autenticação e Controle de Acesso (UI)', () => {
+  test('CT031 - Tentar acessar rota restrita de admin via URL sem estar logado', async ({ page }) => {
+    await page.goto('https://front.serverest.dev/admin/home');
+    await page.waitForURL('**/login');
+    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
   });
 });

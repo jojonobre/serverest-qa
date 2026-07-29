@@ -18,7 +18,7 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     createdUserIds = [];
   });
 
-  test('CT005 - Cadastro com sucesso com atribuição de Administrador', async ({ page }) => {
+  test('CT006 - Cadastro com sucesso com atribuição de Administrador', async ({ page }) => {
     const randomUser = {
       nome: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
@@ -43,7 +43,7 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     });
   });
 
-  test('CT006 - Cadastro com sucesso sem atribuição de Administrador', async ({ page }) => {
+  test('CT007 - Cadastro com sucesso sem atribuição de Administrador', async ({ page }) => {
     const randomUser = {
       nome: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
@@ -68,7 +68,7 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     });
   });
 
-  test('CT007 - Cadastrar com e-mail e senha válidos e nome inválido', async () => {
+  test('CT008 - Cadastrar com e-mail e senha válidos e nome inválido', async () => {
     const randomEmail = faker.internet.email().toLowerCase();
     const randomPassword = faker.internet.password();
 
@@ -77,7 +77,7 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     await registerPage.assertAlertMessage('Nome não pode ser apenas caracteres especiais');
   });
 
-  test('CT008 - Cadastrar com e-mail já utilizado', async ({ request }) => {
+  test('CT010 - Cadastrar com e-mail já utilizado', async ({ request }) => {
     const existingEmail = faker.internet.email().toLowerCase();
     const initialUserRes = await request.post('https://serverest.dev/usuarios', {
       data: {

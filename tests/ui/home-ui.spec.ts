@@ -65,18 +65,18 @@ test.describe('US003 - Funcionalidade de Home (UI)', () => {
     }
   });
 
-  test('CT009 - Pesquisar item por nome existente', async () => {
+  test('CT013 - Pesquisar item por nome', async () => {
     await homePage.searchProduct(randomProductName);
     await homePage.assertProductIsVisible(randomProductName);
   });
 
-  test('CT010 - Pesquisar produto inexistente', async () => {
+  test('CT014 - Pesquisar produto inexistente', async () => {
     const nonexistentTerm = `Inexistente_${faker.string.uuid()}`;
     await homePage.searchProduct(nonexistentTerm);
     await homePage.assertNoProductFound();
   });
 
-  test('CT011 - Adicionar produto à lista de compras', async ({ page }) => {
+  test('CT015 - Adicionar produto à lista de compras', async ({ page }) => {
     await homePage.addFirstProductToCart();
 
     await expect(page.locator('.alert-danger')).not.toBeVisible();

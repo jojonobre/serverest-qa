@@ -4,9 +4,10 @@ import { faker } from '@faker-js/faker';
 test.describe('US003 - Consulta e Listagem de Produtos (API)', () => {
   let createdProductId: string | null = null;
   let userToken = '';
-  const randomProductName = `Produto Para Buscar ${Date.now()}`;
+  let randomProductName = '';
 
   test.beforeEach(async ({ request }) => {
+    randomProductName = `Produto Para Buscar ${Date.now()}`;
     const adminUser = {
       nome: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
@@ -33,12 +34,12 @@ test.describe('US003 - Consulta e Listagem de Produtos (API)', () => {
       headers: { Authorization: userToken },
       data: {
         nome: randomProductName,
-        preco: '100',
+        preco: 100,
         descricao: 'Teste',
-        quantidade: '10',
+        quantidade: 10,
       },
     });
-    expect(createRes.ok()).toBeTruthy();
+    expect(createRes.status()).toBe(201);
 
     const response = await createRes.json();
     createdProductId = response._id;
