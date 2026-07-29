@@ -68,14 +68,13 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     });
   });
 
-  test('CT008 - Cadastrar com e-mail e senha válidos e nome inválido', async () => {
-    const randomEmail = faker.internet.email().toLowerCase();
-    const randomPassword = faker.internet.password();
-
-    await registerPage.registerUser('12345!@#$', randomEmail, randomPassword, false);
-
-    await registerPage.assertAlertMessage('Nome não pode ser apenas caracteres especiais');
-  });
+  //(BUG-001): Validação de nome com caracteres especiais/numéricos
+test('CT008 - Cadastro com nome inválido', async () => {
+  const randomEmail = faker.internet.email().toLowerCase();
+  const randomPassword = faker.internet.password();
+  await registerPage.registerUser('12345!@#$', randomEmail, randomPassword, false);
+  await registerPage.assertAlertMessage('Nome não pode ser apenas caracteres especiais');
+});
 
   test('CT010 - Cadastrar com e-mail já utilizado', async ({ request }) => {
     const existingEmail = faker.internet.email().toLowerCase();

@@ -78,25 +78,26 @@ test.describe('US005 - Painel e Ações do Administrador (UI)', () => {
     }
   });
 
-  test('CT027 - Tentar cadastrar produto com nome já existente', async () => {
-    const productName = `Produto Duplicado ${faker.string.alphanumeric(6)}`;
+  test('CT027 - Tentar cadastrar produto com nome já existente', async ({ page }) => { // ⚠️ Não esqueça de passar o { page } aqui se não estiver no escopo
+  const productName = `Produto Duplicado ${faker.string.alphanumeric(6)}`;
 
-    await adminPage.goToRegisterProduct();
-    await adminPage.fillProductForm(productName, '100', faker.commerce.productDescription(), '10');
-    const primeiroCadastro = await adminPage.submitProduct();
-    expect(primeiroCadastro.ok()).toBeTruthy();
+  await adminPage.goToRegisterProduct();
+  await adminPage.fillProductForm(productName, '100', faker.commerce.productDescription(), '10');
+  const primeiroCadastro = await adminPage.submitProduct();
+  expect(primeiroCadastro.ok()).toBeTruthy();
 
-    const bodyPrimeiro = await primeiroCadastro.json();
-    if (bodyPrimeiro._id) {
-      createdProductIds.push(bodyPrimeiro._id);
-    }
+  const bodyPrimeiro = await primeiroCadastro.json();
+  if (bodyPrimeiro._id) {
+    createdProductIds.push(bodyPrimeiro._id);
+  }
 
-    await adminPage.goToRegisterProduct();
-    await adminPage.fillProductForm(productName, '100', faker.commerce.productDescription(), '10');
-    const segundoCadastro = await adminPage.submitProduct();
+  await adminPage.goToRegisterProduct();
+  await adminPage.fillProductForm(productName, '100', faker.commerce.productDescription(), '10');
+  const segundoCadastro = await adminPage.submitProduct();
+  expect(segundoCadastro.status()).toBe(400);
 
-    expect(segundoCadastro.status()).toBe(400);
-  });
+  await expect(page.getByText('Já existe produto com esse nome')).toBeVisible();
+});
 
   test('CT029 - Excluir produto cadastrado via UI', async () => {
     const productName = `Produto Para Excluir ${faker.string.alphanumeric(6)}`;

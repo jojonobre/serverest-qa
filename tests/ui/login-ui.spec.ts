@@ -16,6 +16,7 @@ test.describe('US001 - Funcionalidade de Login (UI)', () => {
       email: faker.internet.email().toLowerCase(),
       password: faker.internet.password({ length: 10 }),
     };
+
     const res = await request.post('https://serverest.dev/usuarios', {
       data: {
         nome: faker.person.fullName(),
@@ -23,12 +24,11 @@ test.describe('US001 - Funcionalidade de Login (UI)', () => {
         password: validUser.password,
         administrador: 'false',
       },
-    }).catch(() => null);
+    });
 
-    if (res && res.ok()) {
-      const data = await res.json();
-      createdUserId = data._id;
-    }
+    expect(res.ok()).toBeTruthy(); 
+    const data = await res.json();
+    createdUserId = data._id;
 
     await loginPage.navigate();
   });

@@ -95,6 +95,6 @@ export class AdminPage {
       .getByRole('button', { name: /^Excluir$/i })
       .click();
 
-    await expect(productRow).toBeHidden({ timeout: 10000 });
+     await expect(productRow).toBeHidden({ timeout: 10000 });
   }
 }

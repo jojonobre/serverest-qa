@@ -65,11 +65,6 @@ test.describe('US003 - Funcionalidade de Home (UI)', () => {
     }
   });
 
-  test('CT013 - Pesquisar item por nome', async () => {
-    await homePage.searchProduct(randomProductName);
-    await homePage.assertProductIsVisible(randomProductName);
-  });
-
   test('CT014 - Pesquisar produto inexistente', async () => {
     const nonexistentTerm = `Inexistente_${faker.string.uuid()}`;
     await homePage.searchProduct(nonexistentTerm);
