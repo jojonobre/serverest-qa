@@ -255,8 +255,11 @@ Organização em utilitários, fixtures e Page Objects para reduzir duplicação
 
 Estudante de Ciência da Computação • QA Analyst Intern
 
-<a href="https://github.com/jojonobre">
-  <img src="https://img.shields.io/badge/GitHub-Perfil-181717?style=for-the-badge&logo=github">
+<a href="https://github.com/jojonobre" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+</a>
+<a href="https://www.linkedin.com/in/joyce-maria-86250231a/" target="_blank">
+  <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" />
 </a>
 
 </div>
