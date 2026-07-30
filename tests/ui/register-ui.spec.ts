@@ -68,7 +68,6 @@ test.describe('US002 - Cadastrar Usuário (UI)', () => {
     });
   });
 
-  //(BUG-001): Validação de nome com caracteres especiais/numéricos
 test('CT008 - Cadastro com nome inválido', async () => {
   const randomEmail = faker.internet.email().toLowerCase();
   const randomPassword = faker.internet.password();

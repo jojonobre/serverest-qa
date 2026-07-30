@@ -78,7 +78,7 @@ test.describe('US005 - Painel e Ações do Administrador (UI)', () => {
     }
   });
 
-  test('CT027 - Tentar cadastrar produto com nome já existente', async ({ page }) => { // ⚠️ Não esqueça de passar o { page } aqui se não estiver no escopo
+  test('CT027 - Tentar cadastrar produto com nome já existente', async ({ page }) => { 
   const productName = `Produto Duplicado ${faker.string.alphanumeric(6)}`;
 
   await adminPage.goToRegisterProduct();

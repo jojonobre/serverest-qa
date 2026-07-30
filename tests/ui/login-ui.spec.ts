@@ -54,15 +54,14 @@ test.describe('US001 - Funcionalidade de Login (UI)', () => {
   test('CT003 - Login com email não cadastrado', async () => {
     const unregisteredEmail = faker.internet.email().toLowerCase();
     const randomPassword = faker.internet.password();
-
     await loginPage.login(unregisteredEmail, randomPassword);
     await loginPage.assertErrorMessage('Email e/ou senha inválidos');
   });
 
   test('CT004 - Login com email em formato inválido', async () => {
     const invalidEmailFormat = faker.string.alphanumeric(8); 
-
     await loginPage.login(invalidEmailFormat, 'senha123');
     await loginPage.assertInvalidEmail();
+    await loginPage.assertErrorMessage('Email e/ou senha inválidos');
   });
 });
