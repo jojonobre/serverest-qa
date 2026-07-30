@@ -19,6 +19,7 @@ Este projeto engloba a validação automatizada de ponta a ponta dos módulos pr
 - **Autenticação e Login** (`US001`)
 - **Cadastro de Usuários** (`US002`)
 - **Vitrine e Busca de Produtos** (`US003`)
+- **Visualização de Lista de Compras** (`US004`)
 - **Painel Administrativo & Gestão de Produtos** (`US005`)
 
 A estrutura foi desenvolvida aplicando o padrão **Page Object Model (POM)** para separação clara entre seletores, ações e especificações de teste, além de rotinas de **setup** e **cleanup via API** para garantir a independência de cada cenário de teste.
@@ -33,7 +34,7 @@ A estrutura foi desenvolvida aplicando o padrão **Page Object Model (POM)** par
 | **Testes de UI** | 16 | 15 | 1 | **93,8%** | ~1.4 min |
 | **TOTAL** | **26** | **25** | **1** | **96,2%** | **~1.6 min** |
 
-> 📌 **Observação sobre a falha (BUG-001):** A única falha registrada na suíte de UI refere-se ao **CT008 (Cadastro)**, onde a aplicação permite cadastrar usuários com nomes compostos exclusivamente por caracteres especiais e/ou números sem exibir a validação esperada no frontend.
+> **Observação sobre a falha (BUG-001):** A única falha registrada na suíte de UI refere-se ao **CT008 (Cadastro)**, onde a aplicação permite cadastrar usuários com nomes compostos exclusivamente por caracteres especiais e/ou números sem exibir a validação esperada no frontend.
 
 ---
 
@@ -92,10 +93,11 @@ A estrutura foi desenvolvida aplicando o padrão **Page Object Model (POM)** par
 
 Antes de executar a suíte, certifique-se de possuir:
 
-- Node.js 18 ou superior
+- Node.js (18 ou superior)
 - Git
 - Docker *(opcional)*
-- Visual Studio Code 
+- Visual Studio Code
+- Extensão do Faker no VS Code
 
 ---
 
@@ -125,6 +127,10 @@ npm install
 npx playwright install
 ```
 
+## 5. Instale o Faker
+```bash
+npm install @faker-js/faker --save-dev
+```
 ---
 
 # Executando os Testes
@@ -202,27 +208,27 @@ O Playwright também gera automaticamente:
 
 #  Boas Práticas Aplicadas
 
-### ✔️ Page Object Model (POM)
+### Page Object Model (POM)
 
 Separação entre elementos da interface, ações e testes, facilitando manutenção e reutilização.
 
-### ✔️ Massa Dinâmica com Faker
+### Massa Dinâmica com Faker
 
 Criação automática de usuários e produtos únicos durante cada execução.
 
-### ✔️ Setup & Teardown via API
+### Setup & Teardown via API
 
 Criação e remoção automática dos dados utilizados nos testes, garantindo independência entre cenários.
 
-### ✔️ Testes Híbridos (UI + API)
+### Testes Híbridos (UI + API)
 
 Validação simultânea da interface e das respostas HTTP da API.
 
-### ✔️ Containerização
+### Containerização
 
 Execução padronizada através do Docker, facilitando integração contínua (CI/CD).
 
-### ✔️ Código Reutilizável
+### Código Reutilizável
 
 Organização em utilitários, fixtures e Page Objects para reduzir duplicação de código.
 
@@ -240,17 +246,6 @@ Organização em utilitários, fixtures e Page Objects para reduzir duplicação
 - Controle de acesso
 - Validações da API
 - Limpeza automática de dados
-
----
-
-#  Próximas Evoluções
-
-- Integração com GitHub Actions (CI)
-- Execução paralela em múltiplos navegadores
-- Relatórios Allure
-- Testes de Performance da API
-- Execução em ambiente Docker Compose
-- Pipeline completo de CI/CD
 
 ---
 
