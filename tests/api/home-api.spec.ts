@@ -47,7 +47,9 @@ test.describe('US003 - Consulta e Listagem de Produtos (API)', () => {
 
   test.afterEach(async ({ request }) => {
     if (createdProductId) {
-      await request.delete(`https://serverest.dev/produtos/${createdProductId}`).catch(() => {});
+      await request.delete(`https://serverest.dev/produtos/${createdProductId}`, {
+        headers: { Authorization: userToken },
+      }).catch(() => {});
       createdProductId = null;
     }
   });
@@ -57,6 +59,8 @@ test.describe('US003 - Consulta e Listagem de Produtos (API)', () => {
     expect(response.status()).toBe(200);
 
     const body = await response.json();
+    expect(body).toHaveProperty('quantidade');
+    expect(body).toHaveProperty('produtos');
     expect(Array.isArray(body.produtos)).toBeTruthy();
     expect(body.quantidade).toBeGreaterThanOrEqual(0);
   });
@@ -65,10 +69,14 @@ test.describe('US003 - Consulta e Listagem de Produtos (API)', () => {
     const response = await request.get(
       `https://serverest.dev/produtos?nome=${encodeURIComponent(randomProductName)}`
     );
-    expect(response.ok()).toBeTruthy();
+    expect(response.status()).toBe(200);
 
     const body = await response.json();
     expect(body.quantidade).toBeGreaterThan(0);
+    expect(body.produtos[0]).toHaveProperty('_id');
     expect(body.produtos[0].nome).toBe(randomProductName);
+    expect(body.produtos[0]).toHaveProperty('preco');
+    expect(body.produtos[0]).toHaveProperty('descricao');
+    expect(body.produtos[0]).toHaveProperty('quantidade');
   });
 });

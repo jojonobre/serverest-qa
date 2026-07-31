@@ -20,6 +20,7 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     expect(resUser.ok()).toBeTruthy();
     const bodyUser = await resUser.json();
     createdUserId = bodyUser._id;
+
     const resLogin = await request.post('https://serverest.dev/login', {
       data: {
         email: userPayload.email,
@@ -60,7 +61,9 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
 
     expect(response.status()).toBe(201);
     const body = await response.json();
+    expect(body).toHaveProperty('message');
     expect(body.message).toBe('Cadastro realizado com sucesso');
+    expect(body).toHaveProperty('_id');
 
     createdProductIds.push(body._id);
   });
@@ -82,6 +85,7 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     expect(firstRes.status()).toBe(201);
     const firstBody = await firstRes.json();
     createdProductIds.push(firstBody._id);
+
     const secondRes = await request.post('https://serverest.dev/produtos', {
       headers: { Authorization: userToken },
       data: payload,
@@ -89,6 +93,7 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
 
     expect(secondRes.status()).toBe(400);
     const secondBody = await secondRes.json();
+    expect(secondBody).toHaveProperty('message');
     expect(secondBody.message).toBe('Já existe produto com esse nome');
   });
 
@@ -109,7 +114,21 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
 
     expect(deleteRes.status()).toBe(200);
     const deleteBody = await deleteRes.json();
+    expect(deleteBody).toHaveProperty('message');
     expect(deleteBody.message).toBe('Registro excluído com sucesso');
+  });
+
+  test('DELETE /produtos/:id - Deve retornar mensagem ao tentar excluir produto inexistente', async ({ request }) => {
+    const idInexistente = 'IDINEXISTENTE123';
+
+    const response = await request.delete(`https://serverest.dev/produtos/${idInexistente}`, {
+      headers: { Authorization: userToken },
+    });
+
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body).toHaveProperty('message');
+    expect(body.message).toBe('Nenhum registro excluído');
   });
 
   test('GET /produtos - Deve buscar produto por nome', async ({ request }) => {
@@ -119,9 +138,9 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
       headers: { Authorization: userToken },
       data: {
         nome: productName,
-        preco: '100',
+        preco: 100,
         descricao: 'Teste',
-        quantidade: '10',
+        quantidade: 10,
       },
     });
     expect(createRes.status()).toBe(201);
@@ -131,7 +150,7 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     const response = await request.get(
       `https://serverest.dev/produtos?nome=${encodeURIComponent(productName)}`
     );
-    expect(response.ok()).toBeTruthy();
+    expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.quantidade).toBeGreaterThan(0);
     expect(body.produtos[0].nome).toBe(productName);

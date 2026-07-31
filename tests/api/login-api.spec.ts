@@ -15,10 +15,9 @@ test.describe('US001 - Autenticação / Login (API)', () => {
       data: userCredentials,
     });
 
-    if (res.ok()) {
-      const data = await res.json();
-      createdUserId = data._id;
-    }
+    expect(res.status()).toBe(201);
+    const data = await res.json();
+    createdUserId = data._id;
   });
 
   test.afterEach(async ({ request }) => {
@@ -39,8 +38,10 @@ test.describe('US001 - Autenticação / Login (API)', () => {
     expect(response.status()).toBe(200);
 
     const body = await response.json();
+    expect(body).toHaveProperty('message');
     expect(body.message).toBe('Login realizado com sucesso');
-    expect(body.authorization).toContain('Bearer');
+    expect(body).toHaveProperty('authorization');
+    expect(body.authorization).toContain('Bearer ');
   });
 
   test('POST /login - Autenticação com senha incorreta', async ({ request }) => {
@@ -54,6 +55,7 @@ test.describe('US001 - Autenticação / Login (API)', () => {
     expect(response.status()).toBe(401);
 
     const body = await response.json();
+    expect(body).toHaveProperty('message');
     expect(body.message).toBe('Email e/ou senha inválidos');
   });
 });

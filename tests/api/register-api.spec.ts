@@ -25,7 +25,9 @@ test.describe('US002 - Cadastro de Usuários (API)', () => {
 
     expect(response.status()).toBe(201);
     const body = await response.json();
+    expect(body).toHaveProperty('message');
     expect(body.message).toBe('Cadastro realizado com sucesso');
+    expect(body).toHaveProperty('_id');
 
     if (body._id) {
       createdUserIds.push(body._id);
@@ -42,16 +44,17 @@ test.describe('US002 - Cadastro de Usuários (API)', () => {
       administrador: 'false',
     };
 
-   
     const firstRes = await request.post('https://serverest.dev/usuarios', { data: payload });
     expect(firstRes.status()).toBe(201);
     const firstData = await firstRes.json();
+    expect(firstData).toHaveProperty('_id');
     createdUserIds.push(firstData._id);
 
     const secondRes = await request.post('https://serverest.dev/usuarios', { data: payload });
     expect(secondRes.status()).toBe(400);
 
     const secondData = await secondRes.json();
+    expect(secondData).toHaveProperty('message');
     expect(secondData.message).toBe('Este email já está sendo usado');
   });
 });
