@@ -1,63 +1,57 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
+import { UserApi } from '../../api/UserApi';
+import { AuthApi } from '../../api/AuthApi';
+import { ProductApi } from '../../api/ProductApi';
+import { UserBuilder } from '../../builders/UserBuilder';
+import { ProductBuilder } from '../../builders/ProductBuilder';
 
 test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
+  let userApi: UserApi;
+  let authApi: AuthApi;
+  let productApi: ProductApi;
+
   let createdUserId: string | null = null;
   let createdProductIds: string[] = [];
   let userToken: string = '';
 
   test.beforeEach(async ({ request }) => {
-    const userPayload = {
-      nome: faker.person.fullName(),
-      email: faker.internet.email().toLowerCase(),
-      password: faker.internet.password({ length: 10 }),
-      administrador: 'true',
-    };
+    userApi = new UserApi(request);
+    authApi = new AuthApi(request);
+    productApi = new ProductApi(request);
 
-    const resUser = await request.post('https://serverest.dev/usuarios', {
-      data: userPayload,
-    });
+    const userPayload = new UserBuilder().comoAdmin(true).build();
+    const resUser = await userApi.cadastrarUsuario(userPayload);
     expect(resUser.ok()).toBeTruthy();
+    
     const bodyUser = await resUser.json();
     createdUserId = bodyUser._id;
 
-    const resLogin = await request.post('https://serverest.dev/login', {
-      data: {
-        email: userPayload.email,
-        password: userPayload.password,
-      },
+    const resLogin = await authApi.realizarLogin({
+      email: userPayload.email,
+      password: userPayload.password,
     });
     expect(resLogin.ok()).toBeTruthy();
+
     const bodyLogin = await resLogin.json();
     userToken = bodyLogin.authorization;
   });
 
-  test.afterEach(async ({ request }) => {
+  test.afterEach(async () => {
     for (const productId of createdProductIds) {
-      await request.delete(`https://serverest.dev/produtos/${productId}`, {
-        headers: { Authorization: userToken },
-      });
+      await productApi.deletarProduto(productId, userToken).catch(() => {});
     }
     createdProductIds = [];
 
     if (createdUserId) {
-      await request.delete(`https://serverest.dev/usuarios/${createdUserId}`);
+      await userApi.deletarUsuario(createdUserId).catch(() => {});
       createdUserId = null;
     }
   });
 
-  test('POST /produtos - Deve criar produto via API com sucesso', async ({ request }) => {
-    const productPayload = {
-      nome: `Produto API ${faker.commerce.productName()} ${faker.string.alphanumeric(4)}`,
-      preco: faker.number.int({ min: 50, max: 1000 }),
-      descricao: faker.commerce.productDescription(),
-      quantidade: faker.number.int({ min: 1, max: 50 }),
-    };
+  test('POST /produtos - Deve criar produto via API com sucesso', async () => {
+    const productPayload = new ProductBuilder().build();
 
-    const response = await request.post('https://serverest.dev/produtos', {
-      headers: { Authorization: userToken },
-      data: productPayload,
-    });
+    const response = await productApi.cadastrarProduto(productPayload, userToken);
 
     expect(response.status()).toBe(201);
     const body = await response.json();
@@ -68,28 +62,15 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     createdProductIds.push(body._id);
   });
 
-  test('POST /produtos - Não deve permitir produto com nome duplicado', async ({ request }) => {
-    const productName = `Produto API Duplicado ${faker.string.alphanumeric(6)}`;
+  test('POST /produtos - Não deve permitir produto com nome duplicado', async () => {
+    const payload = new ProductBuilder().build();
 
-    const payload = {
-      nome: productName,
-      preco: 150,
-      descricao: faker.commerce.productDescription(),
-      quantidade: 10,
-    };
-
-    const firstRes = await request.post('https://serverest.dev/produtos', {
-      headers: { Authorization: userToken },
-      data: payload,
-    });
+    const firstRes = await productApi.cadastrarProduto(payload, userToken);
     expect(firstRes.status()).toBe(201);
     const firstBody = await firstRes.json();
     createdProductIds.push(firstBody._id);
-
-    const secondRes = await request.post('https://serverest.dev/produtos', {
-      headers: { Authorization: userToken },
-      data: payload,
-    });
+    
+    const secondRes = await productApi.cadastrarProduto(payload, userToken);
 
     expect(secondRes.status()).toBe(400);
     const secondBody = await secondRes.json();
@@ -97,20 +78,12 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     expect(secondBody.message).toBe('Já existe produto com esse nome');
   });
 
-  test('DELETE /produtos/:id - Deve excluir produto via API', async ({ request }) => {
-    const productRes = await request.post('https://serverest.dev/produtos', {
-      headers: { Authorization: userToken },
-      data: {
-        nome: `Produto para Deletar ${faker.string.alphanumeric(6)}`,
-        preco: 200,
-        descricao: faker.commerce.productDescription(),
-        quantidade: 5,
-      },
-    });
+  test('DELETE /produtos/:id - Deve excluir produto via API', async () => {
+    const productPayload = new ProductBuilder().build();
+    const productRes = await productApi.cadastrarProduto(productPayload, userToken);
     const productData = await productRes.json();
-    const deleteRes = await request.delete(`https://serverest.dev/produtos/${productData._id}`, {
-      headers: { Authorization: userToken },
-    });
+
+    const deleteRes = await productApi.deletarProduto(productData._id, userToken);
 
     expect(deleteRes.status()).toBe(200);
     const deleteBody = await deleteRes.json();
@@ -118,12 +91,10 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     expect(deleteBody.message).toBe('Registro excluído com sucesso');
   });
 
-  test('DELETE /produtos/:id - Deve retornar mensagem ao tentar excluir produto inexistente', async ({ request }) => {
+  test('DELETE /produtos/:id - Deve retornar mensagem ao tentar excluir produto inexistente', async () => {
     const idInexistente = 'IDINEXISTENTE123';
 
-    const response = await request.delete(`https://serverest.dev/produtos/${idInexistente}`, {
-      headers: { Authorization: userToken },
-    });
+    const response = await productApi.deletarProduto(idInexistente, userToken);
 
     expect(response.status()).toBe(200);
     const body = await response.json();
@@ -131,28 +102,19 @@ test.describe('US005 - Gestão de Produtos e Usuários (API)', () => {
     expect(body.message).toBe('Nenhum registro excluído');
   });
 
-  test('GET /produtos - Deve buscar produto por nome', async ({ request }) => {
-    const productName = `Produto Para Buscar ${Date.now()}`;
+  test('GET /produtos - Deve buscar produto por nome', async () => {
+    const productPayload = new ProductBuilder().build();
 
-    const createRes = await request.post('https://serverest.dev/produtos', {
-      headers: { Authorization: userToken },
-      data: {
-        nome: productName,
-        preco: 100,
-        descricao: 'Teste',
-        quantidade: 10,
-      },
-    });
+    const createRes = await productApi.cadastrarProduto(productPayload, userToken);
     expect(createRes.status()).toBe(201);
     const createBody = await createRes.json();
     createdProductIds.push(createBody._id);
 
-    const response = await request.get(
-      `https://serverest.dev/produtos?nome=${encodeURIComponent(productName)}`
-    );
+    const response = await productApi.listarProdutos({ nome: productPayload.nome });
+
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.quantidade).toBeGreaterThan(0);
-    expect(body.produtos[0].nome).toBe(productName);
+    expect(body.produtos[0].nome).toBe(productPayload.nome);
   });
 });

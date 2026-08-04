@@ -2,8 +2,6 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-
-  // Evita conflitos entre testes que usam os mesmos dados da API.
   fullyParallel: false,
   workers: 1,
 

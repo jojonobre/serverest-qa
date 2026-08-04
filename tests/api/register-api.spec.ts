@@ -1,27 +1,25 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
+import { UserApi } from '../../api/UserApi';
+import { UserBuilder } from '../../builders/UserBuilder';
 
 test.describe('US002 - Cadastro de Usuários (API)', () => {
+  let userApi: UserApi;
   let createdUserIds: string[] = [];
 
-  test.afterEach(async ({ request }) => {
+  test.beforeEach(({ request }) => {
+    userApi = new UserApi(request);
+  });
+
+  test.afterEach(async () => {
     for (const userId of createdUserIds) {
-      await request.delete(`https://serverest.dev/usuarios/${userId}`).catch(() => {});
+      await userApi.deletarUsuario(userId).catch(() => {});
     }
     createdUserIds = [];
   });
 
-  test('POST /usuarios - Deve cadastrar um usuário com sucesso via API', async ({ request }) => {
-    const payload = {
-      nome: faker.person.fullName(),
-      email: faker.internet.email().toLowerCase(),
-      password: faker.internet.password({ length: 10 }),
-      administrador: 'true',
-    };
-
-    const response = await request.post('https://serverest.dev/usuarios', {
-      data: payload,
-    });
+  test('POST /usuarios - Deve cadastrar um usuário com sucesso via API', async () => {
+    const payload = new UserBuilder().comoAdmin(true).build();
+    const response = await userApi.cadastrarUsuario(payload);
 
     expect(response.status()).toBe(201);
     const body = await response.json();
@@ -34,23 +32,15 @@ test.describe('US002 - Cadastro de Usuários (API)', () => {
     }
   });
 
-  test('POST /usuarios - Não deve permitir cadastro com e-mail duplicado', async ({ request }) => {
-    const duplicatedEmail = faker.internet.email().toLowerCase();
-
-    const payload = {
-      nome: faker.person.fullName(),
-      email: duplicatedEmail,
-      password: faker.internet.password(),
-      administrador: 'false',
-    };
-
-    const firstRes = await request.post('https://serverest.dev/usuarios', { data: payload });
+  test('POST /usuarios - Não deve permitir cadastro com e-mail duplicado', async () => {
+    const payload = new UserBuilder().comoAdmin(false).build();
+    const firstRes = await userApi.cadastrarUsuario(payload);
     expect(firstRes.status()).toBe(201);
+    
     const firstData = await firstRes.json();
     expect(firstData).toHaveProperty('_id');
     createdUserIds.push(firstData._id);
-
-    const secondRes = await request.post('https://serverest.dev/usuarios', { data: payload });
+    const secondRes = await userApi.cadastrarUsuario(payload);
     expect(secondRes.status()).toBe(400);
 
     const secondData = await secondRes.json();

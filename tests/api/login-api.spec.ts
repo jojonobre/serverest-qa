@@ -1,38 +1,37 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
+import { UserApi } from '../../api/UserApi';
+import { AuthApi } from '../../api/AuthApi';
+import { UserBuilder } from '../../builders/UserBuilder';
+import { UserPayload } from '../../models/UserModel';
 
 test.describe('US001 - Autenticação / Login (API)', () => {
+  let userApi: UserApi;
+  let authApi: AuthApi;
   let createdUserId: string | null = null;
-  const userCredentials = {
-    nome: faker.person.fullName(),
-    email: faker.internet.email().toLowerCase(),
-    password: faker.internet.password({ length: 10 }),
-    administrador: 'false',
-  };
+  let userCredentials: UserPayload;
 
   test.beforeEach(async ({ request }) => {
-    const res = await request.post('https://serverest.dev/usuarios', {
-      data: userCredentials,
-    });
-
+    userApi = new UserApi(request);
+    authApi = new AuthApi(request);
+    userCredentials = new UserBuilder().build();
+    const res = await userApi.cadastrarUsuario(userCredentials);
     expect(res.status()).toBe(201);
+
     const data = await res.json();
     createdUserId = data._id;
   });
 
-  test.afterEach(async ({ request }) => {
+  test.afterEach(async () => {
     if (createdUserId) {
-      await request.delete(`https://serverest.dev/usuarios/${createdUserId}`).catch(() => {});
+      await userApi.deletarUsuario(createdUserId).catch(() => {});
       createdUserId = null;
     }
   });
 
-  test('POST /login - Autenticação com credenciais válidas', async ({ request }) => {
-    const response = await request.post('https://serverest.dev/login', {
-      data: {
-        email: userCredentials.email,
-        password: userCredentials.password,
-      },
+  test('POST /login - Autenticação com credenciais válidas', async () => {
+    const response = await authApi.realizarLogin({
+      email: userCredentials.email,
+      password: userCredentials.password,
     });
 
     expect(response.status()).toBe(200);
@@ -44,12 +43,10 @@ test.describe('US001 - Autenticação / Login (API)', () => {
     expect(body.authorization).toContain('Bearer ');
   });
 
-  test('POST /login - Autenticação com senha incorreta', async ({ request }) => {
-    const response = await request.post('https://serverest.dev/login', {
-      data: {
-        email: userCredentials.email,
-        password: 'senha_totalmente_incorreta',
-      },
+  test('POST /login - Autenticação com senha incorreta', async () => {
+    const response = await authApi.realizarLogin({
+      email: userCredentials.email,
+      password: 'senha_totalmente_incorreta',
     });
 
     expect(response.status()).toBe(401);

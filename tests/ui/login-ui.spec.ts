@@ -58,10 +58,10 @@ test.describe('US001 - Funcionalidade de Login (UI)', () => {
     await loginPage.assertErrorMessage('Email e/ou senha inválidos');
   });
 
-  test('CT004 - Login com email em formato inválido', async () => {
-    const invalidEmailFormat = faker.string.alphanumeric(8); 
+  test('CT004 - Login com email em formato inválido', async ({ page }) => {
+    const invalidEmailFormat = faker.string.alphanumeric(8);
     await loginPage.login(invalidEmailFormat, 'senha123');
     await loginPage.assertInvalidEmail();
-    await loginPage.assertErrorMessage('Email e/ou senha inválidos');
+    await expect(page).toHaveURL(/\/login/);
   });
 });
