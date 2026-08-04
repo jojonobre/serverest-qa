@@ -30,9 +30,9 @@ A estrutura foi desenvolvida aplicando o padrão **Page Object Model (POM)** par
 
 | Camada de Teste | Total Executado | Sucesso (Passed) | Falhas (Failed) | Taxa de Sucesso | Tempo Total |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Testes de API** | 10 | 10 | 0 | **100,0%** | ~0.2 min |
+| **Testes de API** | 11 | 11 | 0 | **100,0%** | ~0.2 min |
 | **Testes de UI** | 16 | 15 | 1 | **93,8%** | ~1.4 min |
-| **TOTAL** | **26** | **25** | **1** | **96,2%** | **~1.6 min** |
+| **TOTAL** | **27** | **26** | **1** | **96,2%** | **~1.6 min** |
 
 > **Observação sobre a falha (BUG-001):** A única falha registrada na suíte de UI refere-se ao **CT008 (Cadastro)**, onde a aplicação permite cadastrar usuários com nomes compostos exclusivamente por caracteres especiais e/ou números sem exibir a validação esperada no frontend.
 
